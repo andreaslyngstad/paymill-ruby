@@ -13,6 +13,7 @@ module Paymill
   autoload :Client,       "paymill/client"
   autoload :Offer,        "paymill/offer"
   autoload :Payment,      "paymill/payment"
+  autoload :Refund,       "paymill/refund"
   autoload :Subscription, "paymill/subscription"
   autoload :Transaction,  "paymill/transaction"
   autoload :Webhook,      "paymill/webhook"
