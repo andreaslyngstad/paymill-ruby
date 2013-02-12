@@ -50,6 +50,13 @@ module Paymill
       https.ca_file     = File.join(File.dirname(__FILE__), "data/paymill.crt")
       https.start do |connection|
         url = "/#{API_VERSION}/#{api_url}"
+        
+        if api_url == 'refunds' 
+          url = "/#{API_VERSION}/#{api_url}/#{data[:id]}"
+          data.delete(:id)
+        else 
+          url = "/#{API_VERSION}/#{api_url}"
+        end
         https_request = case http_method
               when :post
                 Net::HTTP::Post.new(url)
