@@ -1,0 +1,102 @@
+From dc33f7fb8b793d4d615fd28362c89ffc5f96ef98 Mon Sep 17 00:00:00 2001
+From: Andreas Lyngstad <andreaslyngstad@gmail.com>
+Date: Tue, 12 Feb 2013 10:56:19 +0100
+Subject: [PATCH] Adding refunds
+
+---
+ lib/paymill.rb              |    1 +
+ lib/paymill/refund.rb       |    6 +++++
+ spec/paymill/refund_spec.rb |   54 +++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 61 insertions(+)
+ create mode 100644 lib/paymill/refund.rb
+ create mode 100644 spec/paymill/refund_spec.rb
+
+diff --git a/lib/paymill.rb b/lib/paymill.rb
+index c02a3e7..eee1eae 100644
+--- a/lib/paymill.rb
++++ b/lib/paymill.rb
+@@ -13,6 +13,7 @@ module Paymill
+   autoload :Client,       "paymill/client"
+   autoload :Offer,        "paymill/offer"
+   autoload :Payment,      "paymill/payment"
++  autoload :Refund,       "paymill/refund"
+   autoload :Subscription, "paymill/subscription"
+   autoload :Transaction,  "paymill/transaction"
+   autoload :Webhook,      "paymill/webhook"
+diff --git a/lib/paymill/refund.rb b/lib/paymill/refund.rb
+new file mode 100644
+index 0000000..9fbc8c7
+--- /dev/null
++++ b/lib/paymill/refund.rb
+@@ -0,0 +1,6 @@
++module Paymill
++  class Refund < Base
++    attr_accessor :id, :transaction, :amount, :status, :description,
++                  :livemode, :created_at, :updated_at
++  end
++end
+\ No newline at end of file
+diff --git a/spec/paymill/refund_spec.rb b/spec/paymill/refund_spec.rb
+new file mode 100644
+index 0000000..95fbeca
+--- /dev/null
++++ b/spec/paymill/refund_spec.rb
+@@ -0,0 +1,54 @@
++require "spec_helper"
++
++describe Paymill::Refund do
++  let(:valid_attributes) do
++    
++    {
++      transaction:                 {
++        id:     "tran_123",
++        amount:   80,
++        currency: "EUR",
++      },
++      amount: 420,
++      description: "Returned",
++      livemode: false
++    }
++  end
++
++  let (:refund) do
++    Paymill::Refund.new(valid_attributes)
++  end
++
++  describe "#initialize" do
++    it "initializes all attributes correctly" do
++      refund.transaction[:id].should eql("tran_123")
++      refund.transaction[:amount].should eql(80)
++      refund.transaction[:currency].should eql("EUR") 
++      refund.amount.should eql(420)
++      refund.status.should eql("open")
++      refund.description.should eql("Returned")
++      refund.livemode.should be_false
++    end
++  end
++
++  describe ".find" do
++    it "makes a new GET request using the correct API endpoint to receive a specific subscription" do
++      Paymill.should_receive(:request).with(:get, "refunds/123", {}).and_return("data" => {}) 
++    end
++  end
++
++  describe ".all" do
++    it "makes a new GET request using the correct API endpoint to receive all subscriptions" do
++      Paymill.should_receive(:request).with(:get, "refunds/", {}).and_return("data" => {})
++      Paymill::Refund.all
++    end
++  end
++
++
++  describe ".create" do
++    it "makes a new POST request using the correct API endpoint" do
++      Paymill.should_receive(:request).with(:post, "refunds", valid_attributes).and_return("data" => {})
++      Paymill::Refund.create(valid_attributes)
++    end
++  end
++end
+\ No newline at end of file
+-- 
+1.7.9.5
+
