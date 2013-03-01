@@ -12,6 +12,7 @@ describe Paymill::Subscription do
       trial_start:          1349945681,
       trial_end:            1349945682,
       cancel_at_period_end: false,
+      next_capture_at: 1349945682,
       client:               {
         email: "stefan.sprenger@dkd.de"
       }
